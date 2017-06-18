@@ -16,15 +16,18 @@ App.prototype.init = function () {
   this.getThought();
 
   let persitedState = this.loadState()
-
   if (persitedState) {
     this.state.theme = persitedState.theme
     this.switchThemes(this.state.theme)
   }
 
   Array.from(this.themeToggles).forEach(function(toggle) {
+    toggle.setAttribute('data-theme', (vm.state.theme === 'dark') ? 'light' : 'dark');
     toggle.addEventListener('click', function(event) {
       vm.switchThemes(event.target.getAttribute('data-theme'))
+      event.target.setAttribute('data-theme',
+        (event.target.getAttribute('data-theme') === 'dark') ? 'light' : 'dark'
+      )
     })
   })
 };
@@ -40,7 +43,8 @@ App.prototype.getThought = function() {
       var thought = res.data.children[Math.floor(Math.random() * res.data.children.length)];
       vm.thought = {
         post: thought.data.title,
-        author: '/u/' + thought.data.author
+        author: '/u/' + thought.data.author,
+        link: 'http://reddit.com' + thought.data.permalink
       }
       vm.view.innerHTML = vm.renderView(vm.mainTmpl, vm.thought)
     })
