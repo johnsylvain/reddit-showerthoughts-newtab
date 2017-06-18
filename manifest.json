@@ -1,0 +1,11 @@
+{
+  "name": "Reddit Showerthought Newtab Page",
+  "manifest_version": 2,
+  "version": "1.0.0",
+
+  "description": "A Chrome newtab page featuring posts from /r/shouwerthoughts",
+
+  "chrome_url_overrides" : {
+    "newtab": "tab.html"
+  }
+}
