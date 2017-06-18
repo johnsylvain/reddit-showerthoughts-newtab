@@ -9,10 +9,16 @@
   <link href="https://fonts.googleapis.com/css?family=Spectral:400,500" rel="stylesheet">
 </head>
 <body>
-  <div id="view"></div>
+  <div id="app" class="dark">
+    <div id="view"></div>
+    <footer>
+      <button class="theme-toggles" data-theme="dark">Dark</button>
+      <button class="theme-toggles" data-theme="light">Light</button>
+    </footer>
+  </div>
   <script type="text/html" id="main_tmpl">
     <div id="showerthought">
-      <h1><%= post %></h1>
+      <blockquote><%= post %></blockquote>
       <hr class="halfrule">
       <p><%= author %></p>
     </div>

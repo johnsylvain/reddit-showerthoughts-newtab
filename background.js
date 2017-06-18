@@ -1,12 +1,32 @@
 function App() {
   this.thought = null
   this.view = document.getElementById('view');
+  this.appEl = document.getElementById('app');
+  this.themeToggles = document.getElementsByClassName('theme-toggles')
   this.mainTmpl = 'main_tmpl'
   this.cache = {};
+  this.state = {
+    theme: 'light'
+  }
 }
 
 App.prototype.init = function () {
+  var vm = this;
+
   this.getThought();
+
+  let persitedState = this.loadState()
+
+  if (persitedState) {
+    this.state.theme = persitedState.theme
+    this.switchThemes(this.state.theme)
+  }
+
+  Array.from(this.themeToggles).forEach(function(toggle) {
+    toggle.addEventListener('click', function(event) {
+      vm.switchThemes(event.target.getAttribute('data-theme'))
+    })
+  })
 };
 
 App.prototype.getThought = function() {
@@ -45,6 +65,35 @@ App.prototype.renderView = function (str, data) {
     + "');}return p.join('');");
 
   return data ? fn( data ) : fn;
+};
+
+App.prototype.switchThemes = function (newTheme) {
+  this.appEl.className = '';
+  this.appEl.classList.add(newTheme);
+  this.saveState({
+    theme: newTheme
+  })
+};
+
+App.prototype.loadState = function () {
+  try {
+    const serializedState = window.localStorage.getItem('state');
+    if(serializedState === null) {
+      return undefined;
+    }
+    return JSON.parse(serializedState);
+  } catch (e) {
+    return undefined;
+  }
+};
+
+App.prototype.saveState = function (state) {
+  try {
+    const serializedState = JSON.stringify(state);
+    window.localStorage.setItem('state', serializedState)
+  } catch (e) {
+    // ignore
+  }
 };
 
 var app = new App();
