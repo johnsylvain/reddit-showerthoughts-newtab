@@ -5,12 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>New Tab</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css?family=Spectral:400,500" rel="stylesheet">
 </head>
 <body>
   <div id="view"></div>
   <script type="text/html" id="main_tmpl">
-    <h1><%= post %></h1>
-    <p><%= author %></p>
+    <div id="showerthought">
+      <h1><%= post %></h1>
+      <hr class="halfrule">
+      <p><%= author %></p>
+    </div>
   </script>
   <script src="background.js"></script>
 </body>

@@ -12,7 +12,7 @@ App.prototype.init = function () {
 App.prototype.getThought = function() {
   var vm = this;
 
-  fetch('https://www.reddit.com/r/showerthoughts/hot.json')
+  fetch('https://www.reddit.com/r/showerthoughts/hot.json?limit=600')
     .then(function(data) {
       return data.json()
     })
