@@ -2,58 +2,91 @@ function App() {
   this.thought = null
   this.view = document.getElementById('view');
   this.appEl = document.getElementById('app');
-  this.themeToggles = document.getElementsByClassName('theme-toggles')
-  this.mainTmpl = 'main_tmpl'
-  this.cache = {};
+  this.themeToggle = document.getElementById('theme-toggle')
+
+  this.tmplCache = {};
   this.state = {
-    theme: 'light'
+    theme: 'light',
+    cachedPosts: undefined
   }
+}
+
+Date.prototype.addHours= function(h){
+    var copiedDate = new Date(this.getTime());
+    copiedDate.setHours(copiedDate.getHours()+h);
+    return copiedDate;
 }
 
 App.prototype.init = function () {
   var vm = this;
 
-  this.getThought();
+  var persitedState = this.loadState();
 
-  let persitedState = this.loadState()
   if (persitedState) {
-    this.state.theme = persitedState.theme
-    this.switchThemes(this.state.theme)
+    this.state.theme = persitedState.theme;
+    this.switchThemes(persitedState.theme, true)
+
+    this.state.cachedPosts = persitedState.cachedPosts
+    this.getThought(true)
+
+  } else {
+    this.getThought(false);
   }
 
-  Array.from(this.themeToggles).forEach(function(toggle) {
-    toggle.setAttribute('data-theme', (vm.state.theme === 'dark') ? 'light' : 'dark');
-    toggle.addEventListener('click', function(event) {
-      vm.switchThemes(event.target.getAttribute('data-theme'))
-      event.target.setAttribute('data-theme',
-        (event.target.getAttribute('data-theme') === 'dark') ? 'light' : 'dark'
-      )
-    })
+  this.themeToggle.addEventListener('click', function(event) {
+    var newTheme = (vm.state.theme === 'dark') ? 'light' : 'dark'
+    vm.switchThemes(newTheme)
   })
+
 };
 
-App.prototype.getThought = function() {
+App.prototype.getThought = function(cachedThoughts) {
   var vm = this;
 
-  fetch('https://www.reddit.com/r/showerthoughts/hot.json?limit=600')
-    .then(function(data) {
-      return data.json()
-    })
-    .then(function(res) {
-      var thought = res.data.children[Math.floor(Math.random() * res.data.children.length)];
-      vm.thought = {
-        post: thought.data.title,
-        author: '/u/' + thought.data.author,
-        link: 'http://reddit.com' + thought.data.permalink
-      }
-      vm.view.innerHTML = vm.renderView(vm.mainTmpl, vm.thought)
-    })
+  function getAndRender(t) {
+    var thought = t[Math.floor(Math.random() * t.length)];
+    vm.thought = {
+      post: thought.post,
+      author: '/u/' + thought.author,
+      link: 'http://reddit.com' + thought.permalink
+    }
+    vm.view.innerHTML = vm.renderView('main_tmpl', vm.thought)
+  }
+
+  if ((cachedThoughts &&
+    new Date() <= new Date(vm.state.cachedPosts.expirationCacheTime)) ||
+    !navigator.onLine
+  ) {
+    getAndRender(vm.state.cachedPosts.data)
+  } else {
+
+    fetch('https://www.reddit.com/r/showerthoughts/hot.json?limit=300')
+      .then(function(data) {
+        return data.json()
+      })
+      .then(function(res) {
+        vm.state.cachedPosts = {
+          data: res.data.children.map(function(post) {
+            return {
+              post: post.data.title,
+              author: post.data.author,
+              permalink: post.data.permalink
+            }
+          }),
+          expirationCacheTime: new Date().addHours(1)
+        };
+
+        getAndRender(vm.state.cachedPosts.data);
+        vm.saveState(vm.state)
+      })
+  }
+
 
 }
 
 App.prototype.renderView = function (str, data) {
   var fn = !/\W/.test(str) ?
-    this.cache[str] = this.cache[str] ||
+    this.tmplCache[str] = this.tmplCache[str] ||
       this.renderView(document.getElementById(str).innerHTML) :
     new Function("obj",
       "var p=[],print=function(){p.push.apply(p,arguments);};" +
@@ -71,12 +104,17 @@ App.prototype.renderView = function (str, data) {
   return data ? fn( data ) : fn;
 };
 
-App.prototype.switchThemes = function (newTheme) {
+App.prototype.switchThemes = function (newTheme, onLoad) {
   this.appEl.className = '';
   this.appEl.classList.add(newTheme);
-  this.saveState({
+
+  if (onLoad) return
+
+  this.state.theme = newTheme;
+
+  this.saveState(Object.assign({}, this.state, {
     theme: newTheme
-  })
+  }));
 };
 
 App.prototype.loadState = function () {
