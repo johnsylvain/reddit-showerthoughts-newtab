@@ -2,7 +2,7 @@
   "manifest_version": 2,
 
   "name": "Reddit /r/showerthoughts Newtab",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "short_name": "showerthought-newtab",
   "description": "A Chrome newtab page featuring posts from /r/showerthoughts",
 
