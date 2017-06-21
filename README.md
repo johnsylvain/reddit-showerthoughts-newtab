@@ -6,5 +6,9 @@ __Download__: https://chrome.google.com/webstore/detail/reddit-rshowerthoughts-n
 
 ## Features
 - Light and Dark Theme
-- Cache Post data for 1 hour
+- Caches Post data for 1 hour
 - localStorage
+- offline
+
+## Todo
+- [ ] convert to localstorage to [chrome.storage.sync](https://developer.chrome.com/extensions/storage#property-sync)
