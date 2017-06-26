@@ -113,3 +113,34 @@ footer:hover {
 .theme-toggles:hover {
   background-color: #3498db;
 }
+
+
+#sidebar {
+	font-family: 'Asap';
+	color: #555;
+	height: 100vh;
+	width: 400px;
+	background-color: white;
+	position: fixed;
+	top: 0;
+	left: -400px;
+	left: -400px;
+	padding: 1em;
+	transition: left 0.3s ease;
+	z-index: 3000;
+}
+#sidebar.showing {
+	left: 0px;
+}
+#sidebar #menu-toggle-btn {
+	position: absolute;
+	top: 0;
+	left: 400px;
+	font-size: 2em;
+	padding: 0.5em;
+	cursor: pointer;
+}
+#sidebar h2 {
+	font-size: 1.5em;
+	font-weight: 500;
+}

@@ -2,7 +2,9 @@ function App() {
   this.thought = null
   this.view = document.getElementById('view');
   this.appEl = document.getElementById('app');
-  this.themeToggle = document.getElementById('theme-toggle')
+  this.themeToggle = document.getElementById('theme-toggle');
+
+  this.sidebar = new SideBar();
 
   this.tmplCache = {};
   this.state = {
@@ -10,6 +12,30 @@ function App() {
     cachedPosts: undefined
   }
 }
+
+function SideBar() {
+  this.sidebarEl = document.getElementById('sidebar');
+  this.toggleBtn = document.getElementById('menu-toggle-btn');
+  this.showing = false;
+}
+
+SideBar.prototype.init = function () {
+  var vm = this;
+
+  this.toggleBtn.addEventListener('click', function(event) {
+    vm.toggleSlide(vm.showing);
+  })
+};
+
+SideBar.prototype.toggleSlide = function (flag) {
+  if (flag) {
+    this.sidebarEl.classList.remove('showing')
+    this.showing = false;
+  } else {
+    this.sidebarEl.classList.add('showing');
+    this.showing = true;
+  }
+};
 
 Date.prototype.addHours= function(h){
     var copiedDate = new Date(this.getTime());
@@ -36,7 +62,9 @@ App.prototype.init = function () {
   this.themeToggle.addEventListener('click', function(event) {
     var newTheme = (vm.state.theme === 'dark') ? 'light' : 'dark'
     vm.switchThemes(newTheme)
-  })
+  });
+
+  this.sidebar.init();
 
 };
 
