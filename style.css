@@ -39,6 +39,24 @@ html, body {
   background-color: #eee;
   color:#555;
 }
+#app.blue {
+  background-color: #3498db;
+  color:white;
+}
+#app.green {
+  background-color: #2ecc71;
+  color:white;
+}
+#app.purple {
+  background-color: #9b59b6;
+  color:white;
+}
+#app.red {
+  background-color: #e74c3c;
+  color:white;
+}
+
+
 #app.light hr {
   background-color: rgba(0, 0, 0, 0.1);
 }
@@ -73,7 +91,7 @@ a {
   font-size: 16em;
   position: absolute;
   left: -0.05em;
-  opacity: 0.05;
+  opacity: 0.15;
   top: -0.05em;
   letter-spacing: -0.07em;
   z-index: -1000;
@@ -114,33 +132,44 @@ footer:hover {
   background-color: #3498db;
 }
 
-
-#sidebar {
+#setting-pane {
 	font-family: 'Asap';
-	color: #555;
-	height: 100vh;
-	width: 400px;
-	background-color: white;
-	position: fixed;
-	top: 0;
-	left: -400px;
-	left: -400px;
-	padding: 1em;
-	transition: left 0.3s ease;
-	z-index: 3000;
+	opacity: 0;
+	height: 0px;
+	overflow: hidden;
+	max-width: 300px;
+	transition: opacity 0.3s ease, height 0.3s ease, width 0.3s ease;
+	width: 0px;
 }
-#sidebar.showing {
-	left: 0px;
+#menu-toggle:hover #setting-pane {
+	opacity: 1;
+	height: 110px;
+	width: 180px;
 }
-#sidebar #menu-toggle-btn {
-	position: absolute;
-	top: 0;
-	left: 400px;
-	font-size: 2em;
-	padding: 0.5em;
+#setting-pane .color-wrapper {
+	width: 33%;
+	float: left;
+	padding-right: 0.5em;
+	padding-bottom: 0.5em;
+}
+#setting-pane .color {
+	border-radius: 0.2em;
+	height: 50px;
 	cursor: pointer;
 }
-#sidebar h2 {
-	font-size: 1.5em;
-	font-weight: 500;
+#setting-pane .color.light { background-color: #eee; }
+#setting-pane .color.dark { background-color: #2c2c2c; }
+#setting-pane .color.blue { background-color: #3498db; }
+#setting-pane .color.green { background-color: #2ecc71; }
+#setting-pane .color.purple { background-color: #9b59b6; }
+#setting-pane .color.red { background-color: #e74c3c; }
+
+.cf:before,
+.cf:after {
+    content: " "; /* 1 */
+    display: table; /* 2 */
+}
+
+.cf:after {
+    clear: both;
 }

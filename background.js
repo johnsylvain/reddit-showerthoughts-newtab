@@ -1,11 +1,10 @@
 function App() {
-  this.thought = null
   this.view = document.getElementById('view');
   this.appEl = document.getElementById('app');
   this.themeToggle = document.getElementById('theme-toggle');
 
-  this.sidebar = new SideBar();
-
+  this.thought = null;
+  this.isMenuShowing = false;
   this.tmplCache = {};
   this.state = {
     theme: 'light',
@@ -13,29 +12,7 @@ function App() {
   }
 }
 
-function SideBar() {
-  this.sidebarEl = document.getElementById('sidebar');
-  this.toggleBtn = document.getElementById('menu-toggle-btn');
-  this.showing = false;
-}
 
-SideBar.prototype.init = function () {
-  var vm = this;
-
-  this.toggleBtn.addEventListener('click', function(event) {
-    vm.toggleSlide(vm.showing);
-  })
-};
-
-SideBar.prototype.toggleSlide = function (flag) {
-  if (flag) {
-    this.sidebarEl.classList.remove('showing')
-    this.showing = false;
-  } else {
-    this.sidebarEl.classList.add('showing');
-    this.showing = true;
-  }
-};
 
 Date.prototype.addHours= function(h){
     var copiedDate = new Date(this.getTime());
@@ -64,7 +41,12 @@ App.prototype.init = function () {
     vm.switchThemes(newTheme)
   });
 
-  this.sidebar.init();
+  Array.from(document.getElementsByClassName('color')).forEach(function(pane) {
+    pane.addEventListener('click', function(event) {
+      // console.log(event.target.getAttribute('data-theme'))
+      vm.switchThemes(event.target.getAttribute('data-theme'))
+    })
+  })
 
 };
 
@@ -130,6 +112,16 @@ App.prototype.renderView = function (str, data) {
     + "');}return p.join('');");
 
   return data ? fn( data ) : fn;
+};
+
+App.prototype.toggleMenu = function (flag) {
+  if (flag) {
+    this.menuEl.classList.remove('showing');
+    this.isMenuShowing = false;
+  } else {
+    this.menuEl.classList.add('showing');
+    this.isMenuShowing = true;
+  }
 };
 
 App.prototype.switchThemes = function (newTheme, onLoad) {

@@ -12,14 +12,19 @@
 </head>
 <body id="app" class="light">
 
-  <div id="sidebar">
-    <span id="menu-toggle-btn">
-      <i class="ion ion-ios-gear"></i>
-    </span>
-    <h2>Settings</h2>
-  </div>
   <div id="view"></div>
   <footer>
+
+    <button class="btn" id="menu-toggle">Settings
+      <div id="setting-pane" class="cf">
+        <div class="color-wrapper"><div class="color light" data-theme="light"></div></div>
+        <div class="color-wrapper"><div class="color dark" data-theme="dark"></div></div>
+        <div class="color-wrapper"><div class="color blue" data-theme="blue"></div></div>
+        <div class="color-wrapper"><div class="color green" data-theme="green"></div></div>
+        <div class="color-wrapper"><div class="color purple" data-theme="purple"></div></div>
+        <div class="color-wrapper"><div class="color red" data-theme="red"></div></div>
+      </div>
+    </button>
     <button class="btn" id="theme-toggle">Toggle Theme</button>
   </footer>
 
