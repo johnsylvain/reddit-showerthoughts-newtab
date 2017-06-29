@@ -58,17 +58,24 @@ a {
   opacity: 0;
   animation: 1s fadeIn forwards;
   padding: 1em;
-  text-align: center;
+  /*text-align: center;*/
   position: relative;
 }
 #showerthought blockquote {
   font-size: 1.8em;
   line-height: 130%;
+	margin-bottom: 1em;
+	text-indent: -1ch;
+}
+#showerthought span.quote {
+	opacity: 0.5;
 }
 #showerthought p {
   font-size: 1.3em;
+	opacity: 0.6;
+	font-style: italic;
 }
-#showerthought::before {
+/*#showerthought::before {
   content: ',,';
   font-size: 16em;
   position: absolute;
@@ -78,7 +85,7 @@ a {
   letter-spacing: -0.07em;
   z-index: -1000;
 	transform: rotate(180deg);
-}
+}*/
 hr.halfrule {
   outline: none;
   border: none;

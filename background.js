@@ -47,7 +47,7 @@ App.prototype.getThought = function(cachedThoughts) {
     var thought = t[Math.floor(Math.random() * t.length)];
     vm.thought = {
       post: thought.post,
-      author: '/u/' + thought.author,
+      author: 'u/' + thought.author,
       link: 'http://reddit.com' + thought.permalink
     }
     vm.view.innerHTML = vm.renderView('main_tmpl', vm.thought)
