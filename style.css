@@ -50,7 +50,7 @@ a {
   margin: 0 auto;
   opacity: 0;
   animation: 1s fadeIn forwards;
-  padding: 1em;
+  padding: 2em;
   position: relative;
 }
 #showerthought blockquote {
