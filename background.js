@@ -20,18 +20,18 @@ Date.prototype.addHours= function(h){
 App.prototype.init = function () {
   var vm = this;
 
-  var persitedState = this.loadState();
-
-  if (persitedState) {
-    this.state.theme = persitedState.theme;
-    this.switchThemes(persitedState.theme, true)
-
-    this.state.cachedPosts = persitedState.cachedPosts
-    this.getThought(true)
-
-  } else {
-    this.getThought(false);
-  }
+  this.loadState().then(function(persitedState) {
+    if (persitedState) {
+      vm.state.theme = persitedState.theme;
+      vm.switchThemes(persitedState.theme, true)
+  
+      vm.state.cachedPosts = persitedState.cachedPosts
+      vm.getThought(true)
+  
+    } else {
+      vm.getThought(false);
+    }
+  });
 
   this.themeToggle.addEventListener('click', function(event) {
     var newTheme = (vm.state.theme === 'dark') ? 'light' : 'dark'
@@ -52,33 +52,33 @@ App.prototype.getThought = function(cachedThoughts) {
     }
     vm.view.innerHTML = vm.renderView('main_tmpl', vm.thought)
   }
-
+  
   if ((cachedThoughts &&
     new Date() <= new Date(vm.state.cachedPosts.expirationCacheTime)) ||
     !navigator.onLine
   ) {
     getAndRender(vm.state.cachedPosts.data)
   } else {
-
+    
     fetch('https://www.reddit.com/r/showerthoughts/hot.json?limit=300')
-      .then(function(data) {
-        return data.json()
-      })
-      .then(function(res) {
-        vm.state.cachedPosts = {
-          data: res.data.children.map(function(post) {
-            return {
-              post: post.data.title,
-              author: post.data.author,
-              permalink: post.data.permalink
-            }
-          }),
-          expirationCacheTime: new Date().addHours(1)
-        };
-
-        getAndRender(vm.state.cachedPosts.data);
-        vm.saveState(vm.state)
-      })
+    .then(function(data) {
+      return data.json()
+    })
+    .then(function(res) {
+      vm.state.cachedPosts = {
+        data: res.data.children.map(function(post) {
+          return {
+            post: post.data.title,
+            author: post.data.author,
+            permalink: post.data.permalink
+          }
+        }),
+        expirationCacheTime: new Date().addHours(1)
+      };
+      
+      getAndRender(vm.state.cachedPosts.data);
+      vm.saveState(vm.state)
+    })
   }
 
 
@@ -118,15 +118,19 @@ App.prototype.switchThemes = function (newTheme, onLoad) {
 };
 
 App.prototype.loadState = function () {
-  try {
-    const serializedState = chrome.storage.local.get('state');
-    if(serializedState === null) {
-      return undefined;
-    }
-    return JSON.parse(serializedState);
-  } catch (e) {
-    return undefined;
-  }
+  return new Promise(function(resolve, reject) {
+    return chrome.storage.local.get('state', function(result) {
+      if (result.state) {
+        var unserliazedState = JSON.parse(result.state)
+        if (unserliazedState !== undefined) {
+          resolve(unserliazedState)
+        }
+
+      } else {
+        resolve(undefined)
+      }
+    });
+  });
 };
 
 App.prototype.saveState = function (state) {
