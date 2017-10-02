@@ -119,7 +119,7 @@ App.prototype.switchThemes = function (newTheme, onLoad) {
 
 App.prototype.loadState = function () {
   try {
-    const serializedState = window.localStorage.getItem('state');
+    const serializedState = chrome.storage.local.get('state');
     if(serializedState === null) {
       return undefined;
     }
@@ -132,7 +132,10 @@ App.prototype.loadState = function () {
 App.prototype.saveState = function (state) {
   try {
     const serializedState = JSON.stringify(state);
-    window.localStorage.setItem('state', serializedState)
+    chrome.storage.local.set({'state': serializedState})
+    if (chrome.runtime.lastError) {
+        // ignore for now
+    }
   } catch (e) {
     // ignore
   }
