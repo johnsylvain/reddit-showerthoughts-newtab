@@ -1,6 +1,10 @@
 # Reddit /r/Showerthoughts Newtab
-<img src="https://img.shields.io/chrome-web-store/users/pcmdclajhocfphjlgbhniglijghlmlfg.svg" />
-<img src="https://img.shields.io/chrome-web-store/stars/pcmdclajhocfphjlgbhniglijghlmlfg.svg" />
+<a href="https://chrome.google.com/webstore/detail/reddit-rshowerthoughts-ne/pcmdclajhocfphjlgbhniglijghlmlfg">
+  <img src="https://img.shields.io/chrome-web-store/users/pcmdclajhocfphjlgbhniglijghlmlfg.svg" />
+</a>
+<a href="https://chrome.google.com/webstore/detail/reddit-rshowerthoughts-ne/pcmdclajhocfphjlgbhniglijghlmlfg">
+  <img src="https://img.shields.io/chrome-web-store/stars/pcmdclajhocfphjlgbhniglijghlmlfg.svg" />
+</a>
 &nbsp;
 
 Chrome Extension to display a random post from [/r/showerthoughts](http://reddit.com/r/showerthoughts) as your newtab page.  Includes a dark and light theme.
