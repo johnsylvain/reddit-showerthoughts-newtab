@@ -18,56 +18,56 @@ Date.prototype.addHours= function(h){
 }
 
 App.prototype.init = function () {
-  var vm = this;
+  var _this = this;
 
   this.loadState()
   .then(function(persitedState) {
     if (persitedState) {
-      vm.state.theme = persitedState.theme;
-      vm.switchThemes(persitedState.theme, true)
+      _this.state.theme = persitedState.theme;
+      _this.switchThemes(persitedState.theme, true)
 
-      vm.state.cachedPosts = persitedState.cachedPosts
-      vm.getThought(true)
+      _this.state.cachedPosts = persitedState.cachedPosts
+      _this.getThought(true)
 
     } else {
-      vm.getThought(false);
+      _this.getThought(false);
     }
   });
 
   this.themeToggle.addEventListener('click', function(event) {
-    var newTheme = (vm.state.theme === 'dark') ? 'light' : 'dark'
-    vm.switchThemes(newTheme)
+    var newTheme = (_this.state.theme === 'dark') ? 'light' : 'dark'
+    _this.switchThemes(newTheme)
   })
 
 };
 
 App.prototype.getThought = function(cachedThoughts) {
-  var vm = this;
+  var _this = this;
 
   function getAndRender(t) {
     var thought = t[Math.floor(Math.random() * t.length)];
-    vm.thought = {
+    _this.thought = {
       post: thought.post,
       author: 'u/' + thought.author,
       link: 'http://reddit.com' + thought.permalink
     }
-    vm.view.innerHTML = vm.renderView('main_tmpl', vm.thought)
+    _this.view.innerHTML = _this.renderView('main_tmpl', _this.thought)
   }
 
   if ((cachedThoughts &&
-    new Date() <= new Date(vm.state.cachedPosts.expirationCacheTime)) ||
+    new Date() <= new Date(_this.state.cachedPosts.expirationCacheTime)) ||
     !navigator.onLine
   ) {
-    getAndRender(vm.state.cachedPosts.data)
+    getAndRender(_this.state.cachedPosts.data)
   } else {
-    vm.fetchData('https://www.reddit.com/r/showerthoughts/hot.json?limit=300')
+    _this.fetchData('https://www.reddit.com/r/showerthoughts/hot.json?limit=300')
     .then(function (res) {
-      vm.state.cachedPosts = {
+      _this.state.cachedPosts = {
         data: res,
         expirationCacheTime: new Date().addHours(1)
       };
-      getAndRender(vm.state.cachedPosts.data);
-      vm.saveState(vm.state);
+      getAndRender(_this.state.cachedPosts.data);
+      _this.saveState(_this.state);
     })
     .catch(function (err) {
       throw new Error(err);
