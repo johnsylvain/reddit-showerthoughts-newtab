@@ -1,0 +1,8 @@
+{
+  "name": "reddit-showerthoughts-newtab",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/johnsylvain/reddit-showerthoughts-newtab.git",
+  "author": "John Sylvain <john.n.sylvain@gmail.com>",
+  "license": "MIT"
+}

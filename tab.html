@@ -8,19 +8,11 @@
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css?family=Spectral:400,500" rel="stylesheet">
 </head>
-<body id="app" class="light">
+<body>
   <div id="view"></div>
   <footer>
     <button class="btn" id="theme-toggle">Toggle Theme</button>
   </footer>
-  <script type="text/html" id="main_tmpl">
-    <div id="showerthought">
-      <blockquote>
-        <span class="quote">&#8220;</span><a href="<%= link %>"><%= post %></a><span class="quote">&#8221;</span>
-      </blockquote>
-      <p>&#8212; <%= author %></p>
-    </div>
-  </script>
   <script src="app.module.js"></script>
   <script src="background.js"></script>
 </body>

@@ -46,8 +46,6 @@ a {
   to {opacity: 1}
 }
 #showerthought {
-  max-width: 600px;
-  margin: 0 auto;
   opacity: 0;
   animation: 1s fadeIn forwards;
   padding: 2em;

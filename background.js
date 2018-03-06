@@ -1,2 +1,2 @@
 var app = new App();
-app.init();
+app.constructor();
