@@ -6,7 +6,6 @@
   "short_name": "showerthought-newtab",
   "description": "A Chrome newtab page featuring posts from /r/showerthoughts",
 
-  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
   "chrome_url_overrides" : {
     "newtab": "tab.html"
   },

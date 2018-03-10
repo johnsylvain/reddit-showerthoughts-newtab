@@ -1,0 +1,16 @@
+{
+  "name": "reddit-showerthoughts-newtab",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/johnsylvain/reddit-showerthoughts-newtab.git",
+  "author": "John Sylvain <john.n.sylvain@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "parcel watch src/tab.html --public-url ./"
+  },
+  "devDependencies": {
+    "babel-plugin-transform-react-jsx": "^6.24.1",
+    "babel-preset-env": "^1.6.1",
+    "parcel-bundler": "^1.6.2"
+  }
+}
