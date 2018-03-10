@@ -6,7 +6,7 @@ export function h (nodeName, attributes, ...children) {
 }
 
 export function createElement (vnode) {
-  let node = typeof vnode === 'string'
+  let node = typeof vnode === 'string' || typeof vnode === 'number'
     ? document.createTextNode(vnode)
     : document.createElement(vnode.nodeName)
 

@@ -5,7 +5,6 @@ import { Storage } from './storage'
 function App () {
   this.view = document.getElementById('view')
   this.themeToggle = document.getElementById('theme-toggle')
-
   this.state = {
     thought: undefined,
     theme: 'light',
@@ -22,7 +21,7 @@ function App () {
         this.getThought()
       }
     })
-  
+
   this.themeToggle.addEventListener('click', () => {
     this.switchThemes(
       (this.state.theme === 'dark') ? 'light' : 'dark'
@@ -58,10 +57,10 @@ extend(App.prototype, {
     this.view.appendChild(createElement(vnodes))
   },
 
-  setState (state) {
+  setState (state, bypassRender) {
     extend(this.state, state)
     this.saveState(this.state)
-    this.render()
+    if (!bypassRender) this.render()
   },
 
   getThought (cache) {
@@ -112,7 +111,7 @@ extend(App.prototype, {
 
     this.setState({
       theme: newTheme
-    })
+    }, true)
   }
 })
 

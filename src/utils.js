@@ -8,5 +8,3 @@ export function addHours (date, h) {
   copiedDate.setHours(copiedDate.getHours() + h)
   return copiedDate
 }
-
-export const noop = () => {}

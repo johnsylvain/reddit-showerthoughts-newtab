@@ -90,8 +90,6 @@ function addHours(date, h) {
   copiedDate.setHours(copiedDate.getHours() + h);
   return copiedDate;
 }
-
-var noop = exports.noop = function noop() {};
 },{}],6:[function(require,module,exports) {
 'use strict';
 
@@ -112,7 +110,7 @@ function h(nodeName, attributes) {
 }
 
 function createElement(vnode) {
-  var node = typeof vnode === 'string' ? document.createTextNode(vnode) : document.createElement(vnode.nodeName);
+  var node = typeof vnode === 'string' || typeof vnode === 'number' ? document.createTextNode(vnode) : document.createElement(vnode.nodeName);
 
   if (!vnode.attributes) return node;
 
@@ -122,7 +120,7 @@ function createElement(vnode) {
 
   return node;
 }
-},{}],11:[function(require,module,exports) {
+},{}],7:[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -132,30 +130,29 @@ exports.Storage = Storage;
 
 var _utils = require('./utils');
 
-function Storage() {
-  this.__state__ = {};
+function Storage(initialState) {
+  this.__state__ = initialState || {};
 }
 
 (0, _utils.extend)(Storage.prototype, {
-  loadState: function loadState() {
-    return this.__state__ ? Promise.resolve(this.__state__) : new Promise(function (resolve, reject) {
-      return chrome.storage.local.get('state', function (result) {
-        if (result.state) {
-          var unserliazedState = JSON.parse(result.state);
-          if (unserliazedState !== undefined) {
-            resolve(unserliazedState);
-          }
-        } else {
-          resolve(undefined);
+  loadState: function loadState(loadFreshState) {
+    return loadFreshState || this.__state__ ? Promise.resolve(this.__state__) : new Promise(function (resolve, reject) {
+      var state = window.localStorage.getItem('state');
+      if (state) {
+        var unserliazedState = JSON.parse(state);
+        if (unserliazedState !== undefined) {
+          resolve(unserliazedState);
         }
-      });
+      } else {
+        resolve(undefined);
+      }
     });
   },
   saveState: function saveState(state) {
-    this.__state__ = (0, _utils.extend)({}, state);
     try {
+      this.__state__ = (0, _utils.extend)({}, state);
       var serializedState = JSON.stringify(this.__state__);
-      chrome.storage.local.set({ state: serializedState });
+      window.localStorage.setItem('state', serializedState);
     } catch (e) {}
   }
 });
@@ -173,7 +170,6 @@ function App() {
 
   this.view = document.getElementById('view');
   this.themeToggle = document.getElementById('theme-toggle');
-
   this.state = {
     thought: undefined,
     theme: 'light',
@@ -237,10 +233,10 @@ function App() {
       this.view.removeChild(this.view.firstChild);
     }this.view.appendChild((0, _vdom.createElement)(vnodes));
   },
-  setState: function setState(state) {
+  setState: function setState(state, bypassRender) {
     (0, _utils.extend)(this.state, state);
     this.saveState(this.state);
-    this.render();
+    if (!bypassRender) this.render();
   },
   getThought: function getThought(cache) {
     var _this2 = this;
@@ -287,12 +283,12 @@ function App() {
 
     this.setState({
       theme: newTheme
-    });
+    }, true);
   }
 });
 
 new App();
-},{"./utils":5,"./vdom":6,"./storage":11}],15:[function(require,module,exports) {
+},{"./utils":5,"./vdom":6,"./storage":7}],16:[function(require,module,exports) {
 
 var global = (1, eval)('this');
 var OldModule = module.bundle.Module;
@@ -314,7 +310,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '61150' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '53177' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 
@@ -415,5 +411,5 @@ function hmrAccept(bundle, id) {
     return hmrAccept(global.require, id);
   });
 }
-},{}]},{},[15,3])
+},{}]},{},[16,3])
 //# sourceMappingURL=5daaab9fd7dd2cd2d297d071e181a355.map
