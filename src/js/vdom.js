@@ -1,8 +1,14 @@
-export function h (nodeName, attributes, ...children) {
-  attributes = attributes || {}
-  children = [].concat.apply([], children)
+export function h (nodeName, attributes) {
+  let rest = []
+  let length = arguments.length
 
-  return { nodeName, attributes, children }
+  while (length-- > 2) rest.push(arguments[length])
+
+  return {
+    nodeName,
+    attributes: attributes || {},
+    children: [].concat.apply([], rest.reverse())
+  }
 }
 
 export function createElement (vnode) {

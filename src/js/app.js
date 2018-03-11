@@ -1,38 +1,37 @@
 import { extend, addHours } from './utils'
 import { h, createElement } from './vdom'
-import { Storage } from './storage'
 
-function App () {
+export function App () {
+  for (let name in arguments) {
+    let dep = arguments[name]
+    this[dep[0]] = Object.create(dep[1].prototype)
+  }
+
   this.view = document.getElementById('view')
-  this.themeToggle = document.getElementById('theme-toggle')
   this.state = {
     thought: undefined,
     theme: 'light',
     cache: undefined
   }
 
-  this.loadState()
+  this.storage.loadState()
     .then(persitedState => {
       if (persitedState) {
         extend(this.state, persitedState)
-        this.switchThemes(persitedState.theme, true)
+        this.switchThemes(persitedState.theme)
         this.getThought(persitedState.cache)
       } else {
         this.getThought()
       }
     })
 
-  this.themeToggle.addEventListener('click', () => {
-    this.switchThemes(
-      (this.state.theme === 'dark') ? 'light' : 'dark'
-    )
-  })
+  document.getElementById('theme-toggle')
+    .addEventListener('click', () => {
+      this.switchThemes(
+        (this.state.theme === 'dark') ? 'light' : 'dark'
+      )
+    })
 }
-
-extend(
-  App.prototype,
-  Object.create(Storage.prototype)
-)
 
 extend(App.prototype, {
   render () {
@@ -59,17 +58,17 @@ extend(App.prototype, {
 
   setState (state, bypassRender) {
     extend(this.state, state)
-    this.saveState(this.state)
+    this.storage.saveState(this.state)
     if (!bypassRender) this.render()
   },
 
   getThought (cache) {
-    const assignThought = thoughts => {
-      return thoughts[Math.floor(Math.random() * thoughts.length)]
-    }
+    const assignThought = thoughts => 
+      thoughts[Math.floor(Math.random() * thoughts.length)]
 
     if (
-      (cache && new Date() <= new Date(this.state.cache.expiration)) ||
+      cache &&
+      new Date() <= new Date(this.state.cache.expiration) ||
       !navigator.onLine
     ) {
       this.setState({
@@ -103,16 +102,12 @@ extend(App.prototype, {
       })
   },
 
-  switchThemes (newTheme, isInitialization) {
+  switchThemes (newTheme) {
     document.body.className = ''
     document.body.classList.add(newTheme)
-
-    if (isInitialization) return
 
     this.setState({
       theme: newTheme
     }, true)
   }
 })
-
-new App()

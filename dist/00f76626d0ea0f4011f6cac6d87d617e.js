@@ -71,7 +71,7 @@ require = (function (modules, cache, entry) {
 
   // Override the current require with this new one
   return newRequire;
-})({10:[function(require,module,exports) {
+})({11:[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -90,7 +90,7 @@ function addHours(date, h) {
   copiedDate.setHours(copiedDate.getHours() + h);
   return copiedDate;
 }
-},{}],11:[function(require,module,exports) {
+},{}],12:[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -120,78 +120,47 @@ function createElement(vnode) {
 
   return node;
 }
-},{}],12:[function(require,module,exports) {
+},{}],5:[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Storage = Storage;
-
-var _utils = require('./utils');
-
-function Storage(initialState) {
-  this.__state__ = initialState || {};
-}
-
-(0, _utils.extend)(Storage.prototype, {
-  loadState: function loadState(loadFreshState) {
-    return loadFreshState || this.__state__ ? Promise.resolve(this.__state__) : new Promise(function (resolve, reject) {
-      var state = window.localStorage.getItem('state');
-      if (state) {
-        var unserliazedState = JSON.parse(state);
-        if (unserliazedState !== undefined) {
-          resolve(unserliazedState);
-        }
-      } else {
-        resolve(undefined);
-      }
-    });
-  },
-  saveState: function saveState(state) {
-    try {
-      this.__state__ = (0, _utils.extend)({}, state);
-      var serializedState = JSON.stringify(this.__state__);
-      window.localStorage.setItem('state', serializedState);
-    } catch (e) {}
-  }
-});
-},{"./utils":10}],6:[function(require,module,exports) {
-'use strict';
+exports.App = App;
 
 var _utils = require('./utils');
 
 var _vdom = require('./vdom');
 
-var _storage = require('./storage');
-
 function App() {
   var _this = this;
 
+  for (var name in arguments) {
+    var dep = arguments[name];
+    this[dep[0]] = typeof dep[1] === 'function' ? Object.create(dep[1].prototype) : dep[1];
+  }
+
   this.view = document.getElementById('view');
-  this.themeToggle = document.getElementById('theme-toggle');
   this.state = {
     thought: undefined,
     theme: 'light',
     cache: undefined
   };
 
-  this.loadState().then(function (persitedState) {
+  this.storage.loadState().then(function (persitedState) {
     if (persitedState) {
       (0, _utils.extend)(_this.state, persitedState);
-      _this.switchThemes(persitedState.theme, true);
+      _this.switchThemes(persitedState.theme);
       _this.getThought(persitedState.cache);
     } else {
       _this.getThought();
     }
   });
 
-  this.themeToggle.addEventListener('click', function () {
+  document.getElementById('theme-toggle').addEventListener('click', function () {
     _this.switchThemes(_this.state.theme === 'dark' ? 'light' : 'dark');
   });
 }
-
-(0, _utils.extend)(App.prototype, Object.create(_storage.Storage.prototype));
 
 (0, _utils.extend)(App.prototype, {
   render: function render() {
@@ -235,7 +204,7 @@ function App() {
   },
   setState: function setState(state, bypassRender) {
     (0, _utils.extend)(this.state, state);
-    this.saveState(this.state);
+    this.storage.saveState(this.state);
     if (!bypassRender) this.render();
   },
   getThought: function getThought(cache) {
@@ -275,20 +244,16 @@ function App() {
       return Promise.resolve(data);
     });
   },
-  switchThemes: function switchThemes(newTheme, isInitialization) {
+  switchThemes: function switchThemes(newTheme) {
     document.body.className = '';
     document.body.classList.add(newTheme);
-
-    if (isInitialization) return;
 
     this.setState({
       theme: newTheme
     }, true);
   }
 });
-
-new App();
-},{"./utils":10,"./vdom":11,"./storage":12}],18:[function(require,module,exports) {
+},{"./utils":11,"./vdom":12}],22:[function(require,module,exports) {
 
 var global = (1, eval)('this');
 var OldModule = module.bundle.Module;
@@ -310,7 +275,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '56435' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '60624' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 
@@ -411,5 +376,5 @@ function hmrAccept(bundle, id) {
     return hmrAccept(global.require, id);
   });
 }
-},{}]},{},[18,6])
+},{}]},{},[22,5])
 //# sourceMappingURL=00f76626d0ea0f4011f6cac6d87d617e.map

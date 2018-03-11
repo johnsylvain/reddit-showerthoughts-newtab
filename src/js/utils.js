@@ -4,7 +4,7 @@ export function extend (obj, props) {
 }
 
 export function addHours (date, h) {
-  var copiedDate = new Date(date.getTime())
+  let copiedDate = new Date(date.getTime())
   copiedDate.setHours(copiedDate.getHours() + h)
   return copiedDate
 }
