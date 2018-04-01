@@ -1,12 +1,9 @@
 import { extend, addHours } from './utils'
 import { h, createElement } from './vdom'
+import { Storage } from './storage'
 
 export function App () {
-  for (let name in arguments) {
-    let dep = arguments[name]
-    this[dep[0]] = Object.create(dep[1].prototype)
-  }
-
+  this.storage = Object.create(Storage.prototype)
   this.view = document.getElementById('view')
   this.state = {
     thought: undefined,

@@ -1,12 +1,12 @@
 import { extend } from './utils'
 
-export function Storage (initialState) {
-  this.__state__ = initialState || {}
+export function Storage () {
+  this.__state__ = {}
 }
 
 extend(Storage.prototype, {
-  loadState (loadFreshState) {
-    return (loadFreshState || this.__state__)
+  loadState () {
+    return (this.__state__)
       ? Promise.resolve(this.__state__)
       : new Promise((resolve, reject) => {
           const state = window.localStorage.getItem('state')
