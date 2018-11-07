@@ -3,7 +3,7 @@ import { h, createElement } from './vdom';
 import { Storage } from './storage';
 
 const themes = {
-  color: ['light', 'dark', 'green', 'blue', 'pink'],
+  color: ['light', 'dark', 'blue', 'wine', 'pink', 'green'],
   font: ['serif', 'sans-serif']
 };
 
