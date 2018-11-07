@@ -10,8 +10,11 @@
     "build": "parcel build src/tab.html --public-url ./"
   },
   "devDependencies": {
+    "babel-core": "^6.26.3",
     "babel-plugin-transform-react-jsx": "^6.24.1",
-    "babel-preset-env": "^1.6.1",
-    "parcel-bundler": "^1.6.2"
+    "babel-preset-env": "^1.6.1"
+  },
+  "dependencies": {
+    "parcel-bundler": "^1.10.3"
   }
 }

@@ -1,30 +1,41 @@
-import { extend, addHours } from './utils';
+import { extend, addHours, pluck } from './utils';
 import { h, createElement } from './vdom';
 import { Storage } from './storage';
 
-const themes = ['light', 'dark', 'nice'];
+const themes = {
+  color: ['light', 'dark', 'green', 'blue', 'pink'],
+  font: ['serif', 'sans-serif']
+};
 
 export function App() {
   this.storage = Object.create(Storage.prototype);
   this.view = document.getElementById('view');
   this.state = {
     thought: undefined,
-    themeIndex: 0,
+    theme: {
+      color: 0,
+      font: 0
+    },
     cache: undefined
   };
 
-  this.storage.loadState().then(persitedState => {
-    if (persitedState) {
-      extend(this.state, persitedState);
-      this.cycleThemes(persitedState.themeIndex);
-      this.getThought(persitedState.cache);
-    } else {
-      this.getThought();
-    }
-  });
+  const persitedState = this.storage.loadState();
 
-  document.getElementById('theme-toggle').addEventListener('click', () => {
-    this.cycleThemes();
+  if (persitedState) {
+    extend(this.state, persitedState);
+    this.cycle('color', persitedState);
+  }
+
+  this.getThought();
+
+  window.addEventListener('click', e => {
+    if (e.target.id === 'theme-toggle') {
+      this.cycle('color');
+    }
+
+    if (e.target.id === 'font-toggle') {
+      this.cycle('font');
+    }
   });
 }
 
@@ -56,16 +67,14 @@ extend(App.prototype, {
     if (!bypassRender) this.render();
   },
 
-  getThought(cache) {
-    const assignThought = thoughts =>
-      thoughts[Math.floor(Math.random() * thoughts.length)];
-
+  getThought() {
     if (
-      (cache && new Date() <= new Date(this.state.cache.expiration)) ||
+      (this.state.cache &&
+        new Date() <= new Date(this.state.cache.expiration)) ||
       !navigator.onLine
     ) {
       this.setState({
-        thought: assignThought(cache.posts)
+        thought: pluck(this.state.cache.posts)
       });
     } else {
       this.fetchData().then(res => {
@@ -74,39 +83,43 @@ extend(App.prototype, {
             posts: res,
             expiration: addHours(new Date(), 1)
           },
-          thought: assignThought(res)
+          thought: pluck(res)
         });
       });
     }
   },
 
-  async fetchData() {
-    const res = await fetch(
-      'https://www.reddit.com/r/showerthoughts/hot.json?limit=300'
-    );
-    const json = await res.json();
-    const data = json.data.children.map(
-      ({ data: { post, author, permalink } }) => ({
-        post,
-        author,
-        permalink
-      })
-    );
-    return Promise.resolve(data);
+  fetchData() {
+    return fetch('https://www.reddit.com/r/showerthoughts/hot.json?limit=300')
+      .then(res => res.json())
+      .then(json => {
+        const data = json.data.children
+          .filter(post => !post.data.stickied)
+          .map(({ data: { title, author, permalink } }) => ({
+            post: title,
+            author,
+            permalink
+          }));
+        return Promise.resolve(data);
+      });
   },
 
-  cycleThemes(persistedThemeIndex) {
-    const newThemeIndex =
-      persistedThemeIndex || (this.state.themeIndex + 1) % themes.length;
-    const newTheme = themes[newThemeIndex];
-    document.body.className = '';
-    document.body.classList.add(newTheme);
+  cycle(type, persitedState) {
+    const newThemeIndex = persitedState
+      ? persitedState.theme[type]
+      : (this.state.theme[type] + 1) % themes[type].length;
 
     this.setState(
       {
-        themeIndex: newThemeIndex
+        theme: Object.assign({}, this.state.theme, {
+          [type]: newThemeIndex
+        })
       },
       true
     );
+
+    document.body.className = '';
+    document.body.classList.add(themes.color[this.state.theme.color]);
+    document.body.classList.add(themes.font[this.state.theme.font]);
   }
 });
