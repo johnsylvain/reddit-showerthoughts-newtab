@@ -221,7 +221,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 var themes = {
   color: ['light', 'dark', 'blue', 'wine', 'pink', 'green'],
-  font: ['serif', 'sans-serif']
+  font: ['serif', 'sans-serif', 'round']
 };
 
 function App() {
@@ -321,6 +321,10 @@ function App() {
     });
   },
   cycle: function cycle(type, persitedState) {
+    if (persitedState && typeof persitedState.theme === 'string') {
+      persitedState = undefined;
+    }
+
     var newThemeIndex = persitedState ? persitedState.theme[type] : (this.state.theme[type] + 1) % themes[type].length;
     this.setState({
       theme: Object.assign({}, this.state.theme, _defineProperty({}, type, newThemeIndex))
@@ -363,7 +367,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61761" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57680" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);

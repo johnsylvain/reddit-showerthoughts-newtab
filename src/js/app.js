@@ -4,7 +4,7 @@ import { Storage } from './storage';
 
 const themes = {
   color: ['light', 'dark', 'blue', 'wine', 'pink', 'green'],
-  font: ['serif', 'sans-serif']
+  font: ['serif', 'sans-serif', 'round']
 };
 
 export function App() {
@@ -105,6 +105,10 @@ extend(App.prototype, {
   },
 
   cycle(type, persitedState) {
+    if (persitedState && typeof persitedState.theme === 'string') {
+      persitedState = undefined;
+    }
+
     const newThemeIndex = persitedState
       ? persitedState.theme[type]
       : (this.state.theme[type] + 1) % themes[type].length;
