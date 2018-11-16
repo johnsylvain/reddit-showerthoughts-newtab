@@ -1108,45 +1108,82 @@ function App() {
     storage.saveState(this.state);
     if (!bypassRender) this.render();
   },
-  getThought: function getThought() {
-    var _this2 = this;
-
-    if (this.state.cache && new Date() <= new Date(this.state.cache.expiration) || !navigator.onLine) {
-      this.setState({
-        thought: (0, _utils.pluck)(this.state.cache.posts)
-      });
-    } else {
-      this.fetchData().then(function (res) {
-        _this2.setState({
-          cache: {
-            posts: res,
-            expiration: (0, _utils.addHours)(new Date(), 1)
-          },
-          thought: (0, _utils.pluck)(res)
-        });
-      });
-    }
-  },
-  fetchData: function () {
-    var _fetchData = (0, _asyncToGenerator2.default)(
+  getThought: function () {
+    var _getThought = (0, _asyncToGenerator2.default)(
     /*#__PURE__*/
     _regenerator.default.mark(function _callee() {
-      var res, json;
+      var useCache, thoughts, newState;
       return _regenerator.default.wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
-              _context.next = 2;
+              useCache = this.state.cache && new Date() <= new Date(this.state.cache.expiration) || !navigator.onLine;
+
+              if (!useCache) {
+                _context.next = 5;
+                break;
+              }
+
+              _context.t0 = this.state.cache.posts;
+              _context.next = 8;
+              break;
+
+            case 5:
+              _context.next = 7;
+              return this.fetchData();
+
+            case 7:
+              _context.t0 = _context.sent;
+
+            case 8:
+              thoughts = _context.t0;
+              newState = {
+                thought: (0, _utils.pluck)(thoughts)
+              };
+
+              if (!useCache) {
+                Object.assign(newState, {
+                  cache: {
+                    posts: thoughts,
+                    expiration: (0, _utils.addHours)(new Date(), 1)
+                  }
+                });
+              }
+
+              this.setState(newState);
+
+            case 12:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee, this);
+    }));
+
+    return function getThought() {
+      return _getThought.apply(this, arguments);
+    };
+  }(),
+  fetchData: function () {
+    var _fetchData = (0, _asyncToGenerator2.default)(
+    /*#__PURE__*/
+    _regenerator.default.mark(function _callee2() {
+      var res, json;
+      return _regenerator.default.wrap(function _callee2$(_context2) {
+        while (1) {
+          switch (_context2.prev = _context2.next) {
+            case 0:
+              _context2.next = 2;
               return fetch('https://www.reddit.com/r/showerthoughts/hot.json?limit=300');
 
             case 2:
-              res = _context.sent;
-              _context.next = 5;
+              res = _context2.sent;
+              _context2.next = 5;
               return res.json();
 
             case 5:
-              json = _context.sent;
-              return _context.abrupt("return", json.data.children.filter(function (post) {
+              json = _context2.sent;
+              return _context2.abrupt("return", json.data.children.filter(function (post) {
                 return !post.data.stickied;
               }).map(function (_ref) {
                 var _ref$data = _ref.data,
@@ -1162,10 +1199,10 @@ function App() {
 
             case 7:
             case "end":
-              return _context.stop();
+              return _context2.stop();
           }
         }
-      }, _callee, this);
+      }, _callee2, this);
     }));
 
     return function fetchData() {

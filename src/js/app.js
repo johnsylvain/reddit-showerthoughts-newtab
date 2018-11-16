@@ -68,26 +68,26 @@ extend(App.prototype, {
     if (!bypassRender) this.render();
   },
 
-  getThought() {
-    if (
+  async getThought() {
+    const useCache =
       (this.state.cache &&
         new Date() <= new Date(this.state.cache.expiration)) ||
-      !navigator.onLine
-    ) {
-      this.setState({
-        thought: pluck(this.state.cache.posts)
-      });
-    } else {
-      this.fetchData().then(res => {
-        this.setState({
-          cache: {
-            posts: res,
-            expiration: addHours(new Date(), 1)
-          },
-          thought: pluck(res)
-        });
+      !navigator.onLine;
+
+    const thoughts = useCache ? this.state.cache.posts : await this.fetchData();
+
+    const newState = { thought: pluck(thoughts) };
+
+    if (!useCache) {
+      Object.assign(newState, {
+        cache: {
+          posts: thoughts,
+          expiration: addHours(new Date(), 1)
+        }
       });
     }
+
+    this.setState(newState);
   },
 
   async fetchData() {
