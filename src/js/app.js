@@ -7,8 +7,9 @@ const themes = {
   font: ['serif', 'sans-serif', 'round']
 };
 
+const storage = new Storage();
+
 export function App() {
-  this.storage = Object.create(Storage.prototype);
   this.view = document.getElementById('view');
   this.state = {
     thought: undefined,
@@ -19,7 +20,7 @@ export function App() {
     cache: undefined
   };
 
-  const persitedState = this.storage.loadState();
+  const persitedState = storage.loadState();
 
   if (persitedState) {
     extend(this.state, persitedState);
@@ -47,7 +48,7 @@ extend(App.prototype, {
           <blockquote>
             <span className="quote">&#8220;</span>
             <a href={`http://reddit.com${this.state.thought.permalink}`}>
-              {this.state.thought.post}
+              {this.state.thought.title}
             </a>
             <span className="quote">&#8221;</span>
           </blockquote>
@@ -63,7 +64,7 @@ extend(App.prototype, {
 
   setState(state, bypassRender) {
     extend(this.state, state);
-    this.storage.saveState(this.state);
+    storage.saveState(this.state);
     if (!bypassRender) this.render();
   },
 
@@ -89,19 +90,19 @@ extend(App.prototype, {
     }
   },
 
-  fetchData() {
-    return fetch('https://www.reddit.com/r/showerthoughts/hot.json?limit=300')
-      .then(res => res.json())
-      .then(json => {
-        const data = json.data.children
-          .filter(post => !post.data.stickied)
-          .map(({ data: { title, author, permalink } }) => ({
-            post: title,
-            author,
-            permalink
-          }));
-        return Promise.resolve(data);
-      });
+  async fetchData() {
+    const res = await fetch(
+      'https://www.reddit.com/r/showerthoughts/hot.json?limit=300'
+    );
+    const json = await res.json();
+
+    return json.data.children
+      .filter(post => !post.data.stickied)
+      .map(({ data: { title, author, permalink } }) => ({
+        title,
+        author,
+        permalink
+      }));
   },
 
   cycle(type, persitedState) {

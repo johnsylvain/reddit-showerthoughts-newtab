@@ -6,7 +6,7 @@ export function Storage() {
 
 extend(Storage.prototype, {
   loadState() {
-    if (this.__state__) return this.__state__;
+    if (this.__state__.length) return this.__state__;
 
     const state = window.localStorage.getItem('state');
 

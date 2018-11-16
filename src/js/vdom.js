@@ -19,11 +19,12 @@ export function createElement(vnode) {
 
   if (!vnode.attributes) return node;
 
-  for (let name in vnode.attributes)
+  for (let name in vnode.attributes) {
     node.setAttribute(
       name === 'className' ? 'class' : name,
       vnode.attributes[name]
     );
+  }
 
   vnode.children.map(createElement).forEach(node.appendChild.bind(node));
 
