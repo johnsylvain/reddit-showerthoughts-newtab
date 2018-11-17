@@ -1,37 +1,47 @@
-import { extend, addHours } from './utils'
-import { h, createElement } from './vdom'
-import { Storage } from './storage'
+import { extend, addHours, pluck } from './utils';
+import { h, createElement } from './vdom';
+import { Storage } from './storage';
 
-export function App () {
-  this.storage = Object.create(Storage.prototype)
-  this.view = document.getElementById('view')
+const themes = {
+  color: ['light', 'dark', 'blue', 'wine', 'pink', 'green'],
+  font: ['serif', 'sans-serif', 'round']
+};
+
+const storage = new Storage();
+
+export function App() {
+  this.view = document.getElementById('view');
   this.state = {
     thought: undefined,
-    theme: 'light',
+    theme: {
+      color: 0,
+      font: 0
+    },
     cache: undefined
+  };
+
+  const persitedState = storage.loadState();
+
+  if (persitedState) {
+    extend(this.state, persitedState);
+    this.cycle('color', persitedState);
   }
 
-  this.storage.loadState()
-    .then(persitedState => {
-      if (persitedState) {
-        extend(this.state, persitedState)
-        this.switchThemes(persitedState.theme)
-        this.getThought(persitedState.cache)
-      } else {
-        this.getThought()
-      }
-    })
+  this.getThought();
 
-  document.getElementById('theme-toggle')
-    .addEventListener('click', () => {
-      this.switchThemes(
-        (this.state.theme === 'dark') ? 'light' : 'dark'
-      )
-    })
+  window.addEventListener('click', e => {
+    if (e.target.id === 'theme-toggle') {
+      this.cycle('color');
+    }
+
+    if (e.target.id === 'font-toggle') {
+      this.cycle('font');
+    }
+  });
 }
 
 extend(App.prototype, {
-  render () {
+  render() {
     const vnodes = (
       <div id="app">
         <div id="showerthought">
@@ -45,66 +55,80 @@ extend(App.prototype, {
           <p>&#8212; {`u/${this.state.thought.author}`}</p>
         </div>
       </div>
-    )
+    );
 
-    while (this.view.firstChild)
-      this.view.removeChild(this.view.firstChild)
+    while (this.view.firstChild) this.view.removeChild(this.view.firstChild);
 
-    this.view.appendChild(createElement(vnodes))
+    this.view.appendChild(createElement(vnodes));
   },
 
-  setState (state, bypassRender) {
-    extend(this.state, state)
-    this.storage.saveState(this.state)
-    if (!bypassRender) this.render()
+  setState(state, bypassRender) {
+    extend(this.state, state);
+    storage.saveState(this.state);
+    if (!bypassRender) this.render();
   },
 
-  getThought (cache) {
-    const assignThought = thoughts => 
-      thoughts[Math.floor(Math.random() * thoughts.length)]
+  async getThought() {
+    const useCache =
+      (this.state.cache &&
+        new Date() <= new Date(this.state.cache.expiration)) ||
+      !navigator.onLine;
 
-    if (
-      cache &&
-      new Date() <= new Date(this.state.cache.expiration) ||
-      !navigator.onLine
-    ) {
-      this.setState({
-        thought: assignThought(cache.posts)
-      })
-    } else {
-      this.fetchData()
-        .then(res => {
-          this.setState({
-            cache: {
-              posts: res,
-              expiration: addHours(new Date(), 1)
-            },
-            thought: assignThought(res)
-          })
-        })
+    const thoughts = useCache ? this.state.cache.posts : await this.fetchData();
+
+    const newState = { thought: pluck(thoughts) };
+
+    if (!useCache) {
+      Object.assign(newState, {
+        cache: {
+          posts: thoughts,
+          expiration: addHours(new Date(), 1)
+        }
+      });
     }
+
+    this.setState(newState);
   },
 
-  fetchData () {
-    return fetch('https://www.reddit.com/r/showerthoughts/hot.json?limit=300')
-      .then(res => res.json())
-      .then(json => {
-        const data = json.data.children
-          .map(post => ({
-            post: post.data.title,
-            author: post.data.author,
-            permalink: post.data.permalink
-          }))
-        return Promise.resolve(data)
-      })
+  async fetchData() {
+    const res = await fetch(
+      'https://www.reddit.com/r/showerthoughts/hot.json?limit=300'
+    );
+    const json = await res.json();
+
+    return json.data.children
+      .filter(post => !post.data.stickied)
+      .map(({ data: { title, author, permalink } }) => ({
+        post: title,
+        author,
+        permalink
+      }));
   },
 
-  switchThemes (newTheme) {
-    document.body.className = ''
-    document.body.classList.add(newTheme)
+  cycle(type, persitedState) {
+    if (persitedState && typeof persitedState.theme === 'string') {
+      persitedState = undefined;
+      this.state.theme = {
+        color: 0,
+        font: 0
+      };
+    }
 
-    this.setState({
-      theme: newTheme
-    }, true)
+    const newThemeIndex = persitedState
+      ? persitedState.theme[type]
+      : (this.state.theme[type] + 1) % themes[type].length;
+
+    this.setState(
+      {
+        theme: Object.assign({}, this.state.theme, {
+          [type]: newThemeIndex
+        })
+      },
+      true
+    );
+
+    document.body.className = '';
+    document.body.classList.add(themes.color[this.state.theme.color]);
+    document.body.classList.add(themes.font[this.state.theme.font]);
   }
-})
+});

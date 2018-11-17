@@ -1,18 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>New Tab</title>
-  <link rel="stylesheet" href="./style.css">
-  <link href="https://fonts.googleapis.com/css?family=Spectral:400,500" rel="stylesheet">
-</head>
-<body class="light">
-  <div id="view"></div>
-  <footer>
-    <button class="btn" id="theme-toggle">Toggle Theme</button>
-  </footer>
-  <script src="./js/index.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>New Tab</title>
+    <link rel="stylesheet" href="./style.scss" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Spectral:400,500|Nunito:400,700"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body class="light serif">
+    <div id="view"></div>
+    <footer>
+      <span>Settings</span>
+      <div class="settings">
+        <button class="btn" id="theme-toggle">Cycle Theme</button>
+        <button class="btn" id="font-toggle">Cycle Font</button>
+      </div>
+    </footer>
+    <script src="./js/index.js"></script>
+  </body>
 </html>
