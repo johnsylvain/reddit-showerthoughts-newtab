@@ -1093,7 +1093,7 @@ function App() {
       className: "quote"
     }, "\u201C"), (0, _vdom.h)("a", {
       href: "http://reddit.com".concat(this.state.thought.permalink)
-    }, this.state.thought.title), (0, _vdom.h)("span", {
+    }, this.state.thought.post), (0, _vdom.h)("span", {
       className: "quote"
     }, "\u201D")), (0, _vdom.h)("p", null, "\u2014 ", "u/".concat(this.state.thought.author))));
 
@@ -1191,7 +1191,7 @@ function App() {
                     author = _ref$data.author,
                     permalink = _ref$data.permalink;
                 return {
-                  title: title,
+                  post: title,
                   author: author,
                   permalink: permalink
                 };
@@ -1212,6 +1212,10 @@ function App() {
   cycle: function cycle(type, persitedState) {
     if (persitedState && typeof persitedState.theme === 'string') {
       persitedState = undefined;
+      this.state.theme = {
+        color: 0,
+        font: 0
+      };
     }
 
     var newThemeIndex = persitedState ? persitedState.theme[type] : (this.state.theme[type] + 1) % themes[type].length;

@@ -48,7 +48,7 @@ extend(App.prototype, {
           <blockquote>
             <span className="quote">&#8220;</span>
             <a href={`http://reddit.com${this.state.thought.permalink}`}>
-              {this.state.thought.title}
+              {this.state.thought.post}
             </a>
             <span className="quote">&#8221;</span>
           </blockquote>
@@ -99,7 +99,7 @@ extend(App.prototype, {
     return json.data.children
       .filter(post => !post.data.stickied)
       .map(({ data: { title, author, permalink } }) => ({
-        title,
+        post: title,
         author,
         permalink
       }));
@@ -108,6 +108,10 @@ extend(App.prototype, {
   cycle(type, persitedState) {
     if (persitedState && typeof persitedState.theme === 'string') {
       persitedState = undefined;
+      this.state.theme = {
+        color: 0,
+        font: 0
+      };
     }
 
     const newThemeIndex = persitedState
